@@ -1,11 +1,10 @@
 #!/bin/bash
 len=$#
-echo $len
+#echo $len
 res=`echo "$1^$2" | bc`
 i=0
 for var in "$@"
 do
-    echo "$var"
     if [ $i -ge 2 ]
     then
     	res=`echo "$res^$var" | bc` 	
@@ -13,4 +12,4 @@ do
     i=`echo "$i+1" | bc`
 
 done
-echo $
+echo $res

@@ -12,11 +12,11 @@ do
 	fi
 	case $opr in
 		"+")
-			result=`echo "$result+$operand" | bc`;;
+			result=`echo "scale=2; $result+$operand" | bc`;;
 		"-")
-			result=`echo "$result-$operand" | bc`;;
+			result=`echo "scale=2; $result-$operand" | bc`;;
 		"*")
-			result=`echo "$result*$operand" | bc`;;
+			result=`echo "scale=2; $result*$operand" | bc`;;
 		"/")
 			result=`echo "scale=2; $result/$operand" | bc`;;
 	esac

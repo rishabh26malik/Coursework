@@ -1,5 +1,5 @@
 #!/bin/bash
-read -p "Enter string : " str
+read str
 #str=`echo str | awk '{print tolower($0)}'`
 str=`echo $str | tr "[:upper:]" "[:lower:]"`
 #echo $str

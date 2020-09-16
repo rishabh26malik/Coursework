@@ -1,5 +1,5 @@
 #!/bin/bash
-read -p "enter n :" n
+read n
 n=`echo $n | xargs | sed 's/ //g'`
 #echo $n
 len=`echo $n | wc -c`
