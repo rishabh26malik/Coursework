@@ -7,6 +7,12 @@
 - `ls -l | sed 's/  */ /g' | sort -n -k 5` displays files in isorted file size order. `sed` is used to replace multiple spaces with single space so that it can be used as a separater. Then we sort it on the basis of `Kth` column. Here `k=5` as 5th column has file size
 - `find /home/rishabh -maxdepth 2 -type d,f -ls | sed 's/  */ /g' | awk '{print $11}'` is used to display all files in `/home` upto 2 level in hierarchy. `maxdepth 2` sets depth upto 2. `type d,f` ensure both file and directories are displayed. `-ls` is the input to `find` command. `sed 's/  */ /g'` is used to replace multiple spaces with single space so that it can be used as a separater. `awk '{print $11}'` displays the 11th column which contain file path. 
 
+**2.)** Following are the steps followed to solve this question
+- First sort the input scrambled word
+- Store all commands available in an array
+- Now traverse each command and check if it's length is same as input word
+- If yes,then compare the sorted input and and sorted command, if they are equal print the command as stop 
+
 **4.)** Following are the 4 steps used in code :
 `echo $str - ` display the list with brackets 
 `sed 's/[()]/ /g' - ` replace parenthesis with blank space
@@ -23,12 +29,16 @@
 - Then iteratively it is done for rest of the operands
 
 **7.)**
-`ps ax | awk '(NR>1){print $1}' | sort -n` command is used to extract sorted list of PIDs of currently running processes.
-- `ps ax` gives details of all process along with their PID in column 1.
-- `awk '(NR>1){print $1}'` is used to skip the first row as it contains column titles and `$1` is used to output just column 1 which has PIDs
+`ps au | awk '(NR>1){print $2}' | sort -n` command is used to extract sorted list of PIDs of currently running processes.
+- `ps au` gives details of all process along with their PID in column 2.
+- `awk '(NR>1){print $2}'` is used to skip the first row as it contains column titles and `$2` is used to output just column 2 which has PIDs
 - `sort -n` sorts the PIDs where `-n` is used to sort as numbers
 - Sorted output of above command is stored in an array
 - Then first `n` elements are printed where n is input from user
+
+**8.)** File path is `/home/rishabh/F/MTECH/Software-Systems-Development/ASSG-1/crontab_file.txt`
+- `$line  > /dev/null 2>&1 ` is used to redirect it to /dev/null so that it is not displayed on terminal
+- `$?` is used to check exit status of the command run to know if it executed properly or not 
 
 **9.)** 
 - Remove spaces from input using `echo $n | xargs | sed 's/ //g'`
