@@ -3,7 +3,7 @@
 **1.)** ASSUMPTION - Working directory path is **/home/rishabh/F/MTECH/Software-Systems-Development/ASSG-1/Assignment1**
 - `mkdir` is used to create directory, `cd` is used to change current working directory
 - `touch lab{1..5}.txt` is used to create multiple files with similar names in a shortcut manner
-- `rename 's/\.txt/\.c/' *.txt` is used to rename all .txt files to .c files using pattern matching4
+- `find . -name "*.txt" -exec sh -c 'f="{}"; mv -- "$f" "${f%.txt}.c"' \;` is used to rename all .txt files to .c files using pattern matching4
 - `ls -l | sed 's/  */ /g' | sort -n -k 5` displays files in isorted file size order. `sed` is used to replace multiple spaces with single space so that it can be used as a separater. Then we sort it on the basis of `Kth` column. Here `k=5` as 5th column has file size
 - `find /home/rishabh -maxdepth 2 -type d,f -ls | sed 's/  */ /g' | awk '{print $11}'` is used to display all files in `/home` upto 2 level in hierarchy. `maxdepth 2` sets depth upto 2. `type d,f` ensure both file and directories are displayed. `-ls` is the input to `find` command. `sed 's/  */ /g'` is used to replace multiple spaces with single space so that it can be used as a separater. `awk '{print $11}'` displays the 11th column which contain file path. 
 
