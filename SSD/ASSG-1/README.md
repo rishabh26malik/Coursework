@@ -11,7 +11,11 @@
 - First sort the input scrambled word
 - Store all commands available in an array
 - Now traverse each command and check if it's length is same as input word
-- If yes,then compare the sorted input and and sorted command, if they are equal print the command as stop 
+- If yes,then compare the sorted input and and sorted command, if they are equal print the command and stop 
+
+**3.)** 
+- `history 10` gives history of last 10 commands
+- `sed 's/  */ /g'` replaces multiples spaces by 1 space
 
 **4.)** Following are the 4 steps used in code :
 `echo $str - ` display the list with brackets 
@@ -29,8 +33,8 @@
 - Then iteratively it is done for rest of the operands
 
 **7.)**
-`ps au | awk '(NR>1){print $2}' | sort -n` command is used to extract sorted list of PIDs of currently running processes.
-- `ps au` gives details of all process along with their PID in column 2.
+`ps -au | awk '(NR>1){print $2}' | sort -n` command is used to extract sorted list of PIDs of currently running processes.
+- `ps -au` gives details of all process along with their PID in column 2.
 - `awk '(NR>1){print $2}'` is used to skip the first row as it contains column titles and `$2` is used to output just column 2 which has PIDs
 - `sort -n` sorts the PIDs where `-n` is used to sort as numbers
 - Sorted output of above command is stored in an array
@@ -53,3 +57,4 @@ h index is accessed using `{n:$i:1}`, where n is input without spaces
 - For division precision of 2 is set using `scale` option in the `bc` command
 - `Switch case` is used for selecting the operation to be performed
 - Result is initialized with first operand.
+- `sed '/\./ s/\.\{0,1\}0\{1,\}$//'` removes trailing zeros after in decimals

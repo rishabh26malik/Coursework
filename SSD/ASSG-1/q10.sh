@@ -12,15 +12,13 @@ do
 	fi
 	case $opr in
 		"+")
-			result=`echo "scale=2; $result+$operand" | bc`;;
+			result=`echo "scale=5; $result+$operand" | bc`;;
 		"-")
-			result=`echo "scale=2; $result-$operand" | bc`;;
+			result=`echo "scale=5; $result-$operand" | bc`;;
 		"*")
-			result=`echo "scale=2; $result*$operand" | bc`;;
+			result=`echo "scale=5; $result*$operand" | bc`;;
 		"/")
-			result=`echo "scale=2; $result/$operand" | bc`;;
+			result=`echo "scale=5; $result/$operand" | bc` ;;
 	esac
 done
-echo $result
-
-
+echo "$result" | xargs printf "%.*f\n" 4 | sed '/\./ s/\.\{0,1\}0\{1,\}$//'

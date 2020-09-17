@@ -1,6 +1,6 @@
 #!/bin/bash
 
-input="/home/rishabh/F/MTECH/Software-Systems-Development/ASSG-1/crontab.txt"
+input="/home/rishabh/F/MTECH/Software-Systems-Development/ASSG-1/crontab_file.txt"
 while IFS= read -r line
 do
   $line  > /dev/null 2>&1 
@@ -13,8 +13,3 @@ do
   #echo "$line"
 done < "$input"
 
-
-
-#If you don't need the output at all then redirect it to /dev/null
-
-#yourcommand > /dev/null 2>&1

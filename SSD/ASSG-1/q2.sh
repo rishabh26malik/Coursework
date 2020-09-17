@@ -16,7 +16,7 @@ for((i=0;i<$n;i++)){
 	if [ ${#str} -eq $len ]
 	then
 		sorted_cmd=`echo ${a[$i]} | grep -o . | sort |tr -d "\n"`
-		if [ $sorted_cmd -eq $input ]
+		if [ $sorted_cmd == $input ]
 		then
 			echo $str 
 			break
