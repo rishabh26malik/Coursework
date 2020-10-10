@@ -59,8 +59,8 @@ public:
 		root->left=tmp;
 		root->height=max(getHeight(root->left),getHeight(root->right))+1;
 		new_root->height=max(getHeight(new_root->left),getHeight(new_root->right))+1;
-		root=new_root;
-		return root;
+		//root=new_root;
+		return new_root;
 	}
 
 	node* RR_rotate(node *root){
@@ -70,8 +70,8 @@ public:
 		root->right=tmp;
 		root->height=max(getHeight(root->left),getHeight(root->right))+1;
 		new_root->height=max(getHeight(new_root->left),getHeight(new_root->right))+1;
-		root=new_root;
-		return root;
+		//root=new_root;
+		return new_root;
 	}
 
 	node* LR_rotate(node *root){
@@ -145,69 +145,75 @@ public:
 		return root;
 	}
 
-	node* erase_util(node* root, T key) {
-	    if(!root){
-	    	
-	        return root;
-	    }
-	    node *tmp;
-	    if(key < root->key){
-	        root->left=erase_util(root->left, key);
-	    }
-	    else if (key > root->key){
-	        root->right=erase_util(root->right, key);
-	    }
+	node* deleteNode_util(node* root, T key){  
+	    if (root == NULL)  
+	        return root;  
+	    if ( key < root->key )  
+	        root->left = deleteNode_util(root->left, key);  
+	    else if( key > root->key )  
+	        root->right = deleteNode_util(root->right, key); 
 	    else{
-	        if(!root->left && !root->right){
-	            delete(root);
-	            SIZE--;
-	            return NULL;
-	        }
-	        else if(!root->left || !root->right){
-	            tmp=(root->left) ? root->left : root->right;
-	            delete(root);
-	            SIZE--;
-	            return tmp;
-	        }
-	        else{
-	            node *tmp=root->right;
-	            while(tmp->left){
-	                tmp=tmp->left;
-	            }
-	            root->key=tmp->key;
-	            root->right=erase_util(root->right, tmp->key);
-	        }
+	    	if(!root->left && !root->right){	//LEAF DELETION
+	    		delete(root);
+	    		return NULL;
+	    	}
+	    	else if(!root->left || !root->right){
+	    		node *tmp;
+	    		if(root->left){
+	    			tmp=root->left;
+	    		}
+	    		else{
+	    			tmp=root->right;
+	    		}
+	    		delete(root);
+	    		return tmp;
+	    	}
+	    	else{
+	    		node *tmp=root->right;
+	    		while(tmp->left){
+	    			tmp=tmp->left;
+	    		}
+	    		root->key=tmp->key;
+	    		root->value=tmp->value;
+	    		root->right=deleteNode_util(root->right, tmp->key);
+	    	}
 	    }
 	    if (root == NULL)  
-	    	return root;
-	    int height_diff=getHeightDiff(root);
+    		return root;
+	    int lHeight = (root->left) ? root->left->height : 0;
+		int rHeight = (root->right) ? root->right->height : 0;
+		root->height= max(lHeight , rHeight) + 1;
+		int height_diff;
+		height_diff=getHeightDiff(root);
 		if(height_diff > 1){			//	LEFT HEIGHT MORE
-			if(root->left && key < root->left->key){			// LL
-				//cout<<"in LL condn...\n";
-				return LL_rotate(root);
+			int L_height_diff=getHeightDiff(root->left);
+			if(L_height_diff >= 0){
+				return LL_rotate(root);			// LL
+				
 			}
-			else if (root->left && key > root->left->key){	// LR
-				//cout<<"in LR condn...\n";
+			else if (L_height_diff < 0){	// LR
 				return LR_rotate(root);
+				
 			}
 		}
 		else if(height_diff < -1){   	//	RIGHT HEIGHT MORE
-			if(root->right && key < root->right->key){			// RL
+			int R_height_diff=getHeightDiff(root->right);
+			if(R_height_diff > 0){			// RL
 				//cout<<"in RL condn...\n";
 				return RL_rotate(root);
 			}
-			else if (root->right && key > root->right->key){	// RR
+			else if (R_height_diff <= 0){	// RR
 				//cout<<"in RR condn...\n";
 				return RR_rotate(root);
 			}
 		} 
-		return root;
-
+	    return root;
 	}
 
-	node* erase(T key){
-		root=erase_util(root, key);
-		return root;	
+
+	void erase(T key){
+		node *nd= deleteNode_util(root,key);
+		return;
 	}
 
 	bool find(node *root, T key){
@@ -265,19 +271,6 @@ public:
     	
     }
 
-	/*U operator[](T key){
-    	node *res=getValue(root,key);
-    	if(!res){
-    		cout<<"not found.. invalid key...\n";
-    		//insert(root,key);
-    		exit(0);
-    	}
-    	else{
-    		return res->value;
-    	}
-    	
-    }*/
-
 };
 
 int main(){
@@ -293,7 +286,7 @@ int main(){
 				break;
 			case 2:
 				cin>>key;
-				tree.root=tree.erase(key);
+				tree.erase(key);
 				break;
 			case 3:
 				cin>>key;
@@ -312,7 +305,7 @@ int main(){
 				break;
 			
 		}
-		
+		tree.inorder(tree.root);
 		//cout<<" height = "<<tree.HEIGHT(tree.root)<<endl;
 		cout<<endl;
 	}

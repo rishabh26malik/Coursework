@@ -53,12 +53,15 @@ public:
 			return true;
 		return false;
 	}
-	bool operator -(abc A){
-		if(p.first - A.p.first < 0 )
+	int operator -(abc A){
+		int x,y;
+		x=(p.first - A.p.first)*(p.first - A.p.first);
+		y=(p.second - A.p.second)*(p.second - A.p.second);
+		/*if(p.first - A.p.first < 0 )
 			return true;
 		else if(p.first == A.p.first && p.second < A.p.second)
 			return true;
-		return false;
+		return false;*/
 	}
 };
 
@@ -130,10 +133,10 @@ public:
 		root->left=tmp;
 		root->height=max(getHeight(root->left),getHeight(root->right))+1;
 		new_root->height=max(getHeight(new_root->left),getHeight(new_root->right))+1;
-		root=new_root;
+		//root=new_root;
 		updateSubtreeSize(root);
 		updateSubtreeSize(new_root);
-		return root;
+		return new_root;
 	}
 
 	node* RR_rotate(node *root){
@@ -145,8 +148,8 @@ public:
 		new_root->height=max(getHeight(new_root->left),getHeight(new_root->right))+1;
 		updateSubtreeSize(root);
 		updateSubtreeSize(new_root);
-		root=new_root;
-		return root;
+		//root=new_root;
+		return new_root;
 	}
 
 	node* LR_rotate(node *root){
@@ -212,63 +215,76 @@ public:
 		return nd;
 	}
 
-	node* deleteNode(node* root, T key) {
-	    if(!root){
-	    	SIZE--;
-	        return root;
-	    }
-	    node *tmp;
-	    if(key < root->val){
-	        root->left=deleteNode(root->left, key);
-	    }
-	    else if (key > root->val){
-	        root->right=deleteNode(root->right, key);
-	    }
-	    else{
-	        if(!root->left && !root->right){
-	            delete(root);
-	            return NULL;
-	        }
-	        else if(!root->left || !root->right){
-	            tmp=(root->left) ? root->left : root->right;
-	            delete(root);
-	            return tmp;
-	        }
-	        else{
-	            node *tmp=root->right;
-	            while(tmp->left){
-	                tmp=tmp->left;
-	            }
-	            root->val=tmp->val;
-	            root->right=deleteNode(root->right, tmp->val);
-	        }
-	    }
+
+	node* deleteNode_util(node* root, T key){  
 	    if (root == NULL)  
+	        return root;  
+	    if ( key < root->val )  
+	        root->left = deleteNode_util(root->left, key);  
+	    else if( key > root->val )  
+	        root->right = deleteNode_util(root->right, key); 
+	    else{
+	    	if(!root->left && !root->right){	//LEAF DELETION
+	    		delete(root);
+	    		return NULL;
+	    	}
+	    	else if(!root->left || !root->right){
+	    		node *tmp;
+	    		if(root->left){
+	    			tmp=root->left;
+	    		}
+	    		else{
+	    			tmp=root->right;
+	    		}
+	    		delete(root);
+	    		return tmp;
+	    	}
+	    	else{
+	    		node *tmp=root->right;
+	    		while(tmp->left){
+	    			tmp=tmp->left;
+	    		}
+	    		root->val=tmp->val;
+	    		root->right=deleteNode_util(root->right, tmp->val);
+	    	}
+	    }
+	    if(root==NULL)
 	    	return root;
-	    int height_diff=getHeightDiff(root);
+	    int lHeight = (root->left) ? root->left->height : 0;
+		int rHeight = (root->right) ? root->right->height : 0;
+		root->height= max(lHeight , rHeight) + 1;
+		int height_diff;
+		height_diff=getHeightDiff(root);
 		if(height_diff > 1){			//	LEFT HEIGHT MORE
-			if(root->left && key < root->left->val){			// LL
-				//cout<<"in LL condn...\n";
-				return LL_rotate(root);
+			int L_height_diff=getHeightDiff(root->left);
+			if(L_height_diff >= 0){
+				return LL_rotate(root);			// LL
+				
 			}
-			else if (root->left && key > root->left->val){	// LR
-				//cout<<"in LR condn...\n";
+			else if (L_height_diff < 0){	// LR
 				return LR_rotate(root);
+				
 			}
 		}
 		else if(height_diff < -1){   	//	RIGHT HEIGHT MORE
-			if(root->right && key < root->right->val){			// RL
+			int R_height_diff=getHeightDiff(root->right);
+			if(R_height_diff > 0){			// RL
 				//cout<<"in RL condn...\n";
 				return RL_rotate(root);
 			}
-			else if (root->right && key > root->right->val){	// RR
+			else if (R_height_diff <= 0){	// RR
 				//cout<<"in RR condn...\n";
 				return RR_rotate(root);
 			}
 		} 
 		updateSubtreeSize(root);
-		return root;
+	    return root;
+	}
 
+
+	void deleteNode(T key){
+		node *nd= deleteNode_util(root,key);
+		return;
 	}
 
 	/*bool search(node *root, T key){
@@ -347,7 +363,10 @@ public:
 	T lower_bound(T key){
 		node *out=NULL;
 		lower_bound_util(root, key, out);
-		return out->val;
+		if(out)
+			return out->val;
+		cout<<"lower bound not present\n";
+		exit(0);
 	}
 
 	void upper_bound_util(node *root, T key, node *&out){
@@ -365,12 +384,18 @@ public:
 		else if(root->val < key){
 			upper_bound_util(root->right, key, out);
 		}
+		else{
+			upper_bound_util(root->right, key, out);	
+		}
 	}
 
 	T upper_bound(T key){
 		node *out=NULL;
 		upper_bound_util(root, key, out);
-		return out->val;
+		if(out)
+			return out->val;
+		cout<<"upper bound not present\n";
+		exit(0);
 	}
 
 	node* kTHlargest_util(node *root, int &k){
@@ -501,7 +526,7 @@ int main(){
 			case 2:
 				cin>>key;
 			
-				tree.root=tree.deleteNode(tree.root,key);
+				tree.deleteNode(key);
 				break;
 			case 3:
 				cin>>key;
@@ -549,12 +574,12 @@ int main(){
 }
 
 /*
-
 int main(){
 	int t,c,result,min_diff, k, key;
 	//string val1,val2;
 	//string key;
 	abc A(4,5);
+	abc B(4,5);
 	abc out;
 	AVL <abc> tree;
 	
@@ -571,7 +596,7 @@ int main(){
 				cin>>key>>k;
 				A.p.first=key;
 				A.p.second=k;
-				tree.root=tree.deleteNode(tree.root,A);
+				tree.deleteNode(A);
 				break;
 			case 3:
 				cin>>key>>k;
@@ -597,13 +622,15 @@ int main(){
 				cin>>key>>k;
 				A.p.first=key;
 				A.p.second=k;
-				out=tree.upper_bound(key);
+				out=tree.upper_bound(A);
 				cout<<out.p.first<<" "<<out.p.second<<endl;
 				//cout<<tree.upper_bound(key)<<endl;
 				break;
 			case 7:
 				cin>>key>>k;
-				out=tree.closestValue(key);
+				A.p.first=key;
+				A.p.second=k;
+				out=tree.closestValue(A);
 				cout<<out.p.first<<" "<<out.p.second<<endl;
 				
 				break;
@@ -616,7 +643,12 @@ int main(){
 			case 9:
 				int low,high;
 				cin>>low>>high;
-				cout<<tree.countINRange(low,high)<<endl;	
+				A.p.first=low;
+				A.p.second=high;
+				cin>>low>>high;
+				B.p.first=low;
+				B.p.second=high;
+				cout<<tree.countINRange(A,B)<<endl;	
 				break;
 		}
 		tree.inorder(tree.root);
